@@ -1,6 +1,9 @@
+import java.util.Properties
+
 plugins {
     id("org.springframework.boot") version "3.0.0-M3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.flywaydb.flyway") version "8.5.13"
     java
 }
 
@@ -49,4 +52,15 @@ dependencyManagement {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+flyway {
+    val resourcesPath = "src/main/resources"
+    val applicationPropertiesFile = file(resourcesPath).resolve("application.properties")
+    val applicationProperties = Properties()
+    applicationProperties.load(applicationPropertiesFile.reader())
+
+    url = applicationProperties["spring.datasource.url"].toString()
+    user = applicationProperties["spring.datasource.username"].toString()
+    password = applicationProperties["spring.datasource.password"].toString()
 }
